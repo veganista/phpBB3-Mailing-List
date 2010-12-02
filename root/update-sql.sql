@@ -1,0 +1,1 @@
+ALTER TABLE `phpbb_users` ADD `mailing_list_subscribed` TINYINT( 1 ) NOT NULL DEFAULT '1';

@@ -1,0 +1,32 @@
+<!-- INCLUDE ucp_header.html -->
+
+<form id="ucp" method="post" action="{S_UCP_ACTION}"{S_FORM_ENCTYPE}>
+
+<h2>{L_TITLE}</h2>
+
+<div class="panel">
+	<div class="inner"><span class="corners-top"><span></span></span>
+
+	<fieldset>
+	<!-- IF ERROR --><p class="error">{ERROR}</p><!-- ENDIF -->
+	<dl>
+		<dt><label for="mailing_list_subscribed0">{L_ML_ALLOW_EMAILS}:</label></dt>
+		<dd>
+			<label for="mailing_list_subscribed1"><input type="radio" name="mailing_list_subscribed" id="mailing_list_subscribed1" value="1"<!-- IF S_ALLOW_EMAIL --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>
+			<label for="mailing_list_subscribed0"><input type="radio" name="mailing_list_subscribed" id="mailing_list_subscribed0" value="0"<!-- IF not S_ALLOW_EMAIL --> checked="checked"<!-- ENDIF --> /> {L_NO}</label>
+		</dd>
+	</dl>
+
+	</fieldset>
+
+	<span class="corners-bottom"><span></span></span></div>
+</div>
+	
+<fieldset class="submit-buttons">
+	{S_HIDDEN_FIELDS}<input type="reset" value="{L_RESET}" name="reset" class="button2" />&nbsp; 
+	<input type="submit" name="submit" value="{L_SUBMIT}" class="button1" />
+	{S_FORM_TOKEN}
+</fieldset>
+</form>
+
+<!-- INCLUDE ucp_footer.html -->

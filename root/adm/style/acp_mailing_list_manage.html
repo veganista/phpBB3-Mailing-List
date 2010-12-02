@@ -1,0 +1,47 @@
+<!-- INCLUDE overall_header.html -->
+
+<a name="maincontent"></a>
+
+<h1>{L_ML_MANAGE_MAILING_LIST}</h1>
+
+<p>{L_ML_MANAGE_MANAGE_DESCRIPTION}</p>
+
+<form action="{U_ACTION}" method="post" name="unsubscribe_users">
+
+<h2>{L_ML_NON_SUBSCRIBERS}</h2>
+
+<table cellspacing="1">
+	<thead>
+	<tr>
+		<th>{L_ML_USERNAME}</th>
+        <th>{L_ML_EMAIL_ADDRESS}</th>
+		<th width="10%">{L_ML_SUBSCRIBE}</th>
+	</tr>
+	</thead>
+	<tbody>
+	<!-- BEGIN nonsubscribers -->
+	<!-- IF nonsubscribers.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
+		<td>
+			{nonsubscribers.USERNAME}
+		</td>
+		<td>
+			{nonsubscribers.EMAIL}
+        </td>
+		<td>
+            <input type="checkbox" name="subscribe[]" value="{nonsubscribers.ID}" />
+		</td>
+	</tr>
+	<!-- BEGINELSE -->
+	<tr>
+		<td>
+			{L_ML_NO_NON_SUBSCRIBERS}
+		</td>
+	</tr>
+	<!-- END nonsubscribers -->
+	</tbody>
+</table>
+<p class="quick">
+	<input class="button2" name="submit" type="submit" value="{L_ML_SUBSCRIBE}" />
+</p>
+</form>
+<!-- INCLUDE overall_footer.html -->

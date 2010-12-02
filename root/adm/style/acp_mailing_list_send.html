@@ -1,0 +1,46 @@
+<!-- INCLUDE overall_header.html -->
+
+<a name="maincontent"></a>
+
+<h1>{L_ML_SEND}</h1>
+
+<p>{L_ML_SEND_EXPLAIN}</p>
+
+<!-- IF S_WARNING -->
+	<div class="errorbox">
+		<h3>{L_WARNING}</h3>
+		<p>{WARNING_MSG}</p>
+	</div>
+<!-- ENDIF -->
+
+<form id="acp_email" method="post" action="{U_ACTION}">
+
+<fieldset>
+	<legend>{L_COMPOSE}</legend>
+
+<dl>
+	<dt><label for="subject">{L_SUBJECT}:</label></dt>
+	<dd><input name="subject" type="text" id="subject" value="{SUBJECT}" /></dd>
+</dl>
+<dl>
+	<dt><label for="message">{L_MASS_MESSAGE}:</label><br /><span>{L_MASS_MESSAGE_EXPLAIN}</span></dt>
+	<dd><textarea id="message" name="message" rows="10" cols="60">{MESSAGE}</textarea></dd>
+</dl>
+<dl>
+	<dt><label for="priority">{L_MAIL_PRIORITY}:</label></dt>
+	<dd><select id="priority" name="mail_priority_flag">{S_PRIORITY_OPTIONS}</select></dd>
+</dl>
+<dl>
+	<dt><label for="send">{L_SEND_IMMEDIATELY}:</label></dt>
+	<dd><input id="send" type="checkbox" class="radio" name="send_immediately" checked="checked" /></dd>
+</dl>
+
+<p class="submit-buttons">
+	<input class="button1" type="submit" id="submit" name="submit" value="{L_SEND_EMAIL}" />&nbsp;
+	<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+</p>
+{S_FORM_TOKEN}
+</fieldset>
+</form>
+
+<!-- INCLUDE overall_footer.html -->

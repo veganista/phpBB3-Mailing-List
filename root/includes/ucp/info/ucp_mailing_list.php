@@ -17,10 +17,10 @@ class ucp_mailing_list_info
 	{
 		return array(
 			'filename'	=> 'ucp_mailing_list',
-			'title'		=> 'UCP_MAILING_LIST',
+			'title'		=> 'ML_MAILING_LIST',
 			'version'	=> '1.0.0',
 			'modes'		=> array(
-				'prefs'	=> array('title' => 'UCP_ML_PREFERENCES', 'auth' => '', 'cat' => array('UCP_MAILING_LIST')),
+				'prefs'	=> array('title' => 'ML_PREFERENCES', 'auth' => '', 'cat' => array('ML_MAILING_LIST')),
 			),
 		);
 	}

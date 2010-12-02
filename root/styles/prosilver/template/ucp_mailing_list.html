@@ -2,14 +2,16 @@
 
 <form id="ucp" method="post" action="{S_UCP_ACTION}"{S_FORM_ENCTYPE}>
 
-<h2>{L_TITLE}</h2>
+<h2>{L_TITLE} <!-- S_ALLOW_EMAILS --></h2>
 
 <div class="panel">
 	<div class="inner"><span class="corners-top"><span></span></span>
 
 	<fieldset>
 	<!-- IF ERROR --><p class="error">{ERROR}</p><!-- ENDIF -->
-	<dl>
+
+    
+    <dl>
 		<dt><label for="mailing_list_subscribed0">{L_ML_ALLOW_EMAILS}:</label></dt>
 		<dd>
 			<label for="mailing_list_subscribed1"><input type="radio" name="mailing_list_subscribed" id="mailing_list_subscribed1" value="1"<!-- IF S_ALLOW_EMAIL --> checked="checked"<!-- ENDIF --> /> {L_YES}</label>

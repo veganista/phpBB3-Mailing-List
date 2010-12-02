@@ -34,14 +34,14 @@ class ucp_mailing_list
 		$s_hidden_fields = '';
 
 		$user->add_lang('mods/mailing_list');
-
-		switch ($mode)
+        $data = array(
+            'mailing_list_subscribed'	=> $user->data['mailing_list_subscribed'],
+        );
+        switch ($mode)
 		{
 			case 'prefs':
 				add_form_key('ucp_mailing_list');
-				$data = array(
-					'mailing_list_subscribed'	=> request_var('mailing_list_subscribed', 0),
-				);
+
 
 
 				if ($submit)
@@ -55,7 +55,7 @@ class ucp_mailing_list
 					if (!sizeof($error))
 					{
 						$sql_ary = array(
-							'mailing_list_subscribed' => $data['mailing_list_subscribed'],
+							'mailing_list_subscribed' => request_var('mailing_list_subscribed', 0),
 						);
 
 						$sql = 'UPDATE ' . USERS_TABLE . '
@@ -84,9 +84,10 @@ class ucp_mailing_list
 
 		}
 
-		$template->assign_vars(array(
+        $template->assign_vars(array(
 			'L_TITLE'			=> $user->lang['ML_MAILING_LIST'],//$user->lang['UCP_PREFS_' . strtoupper($mode)],
-
+            
+            'S_ALLOW_EMAIL'	=> ($data['mailing_list_subscribed'] == 1) ? true : false,
 			'S_HIDDEN_FIELDS'	=> $s_hidden_fields,
 			'S_UCP_ACTION'		=> $this->u_action)
 		);

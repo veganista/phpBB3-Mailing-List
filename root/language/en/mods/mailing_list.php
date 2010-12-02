@@ -58,7 +58,7 @@ $lang = array_merge($lang, array(
     'ML_EMAIL_ADDRESS'              => 'Email Address',
     'ML_USERNAME'                   => 'Username',
     'ML_SEND_EXPLAIN'               => 'Here you can e-mail a message to all users who have <strong>NOT</strong> opted out of your mailing list. To achieve this an e-mail will be sent out to the administrative e-mail address supplied, with a blind carbon copy sent to all recipients. The default setting is to only include 50 recipients in such an e-mail, for more recipients more e-mails will be sent. If you are emailing a large group of people please be patient after submitting and do not stop the page halfway through. It is normal for a mass emailing to take a long time, you will be notified when the script has completed.',
-
+    'ML_NO_SUBSCRIBERS'             => 'There are no subscribers on your mailing list',
     /* ucp lang variables */
     'ML_MAILING_LIST'               => 'Mailing List',
     'ML_ALLOW_EMAILS'               => 'Sign up to the mailing list',

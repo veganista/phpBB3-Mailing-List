@@ -26,7 +26,6 @@ class acp_mailing_list
 					
 		$user->add_lang('mods/mailing_list');
 							
-						
 		// Set up general vars
 						
 		switch($mode)
@@ -272,8 +271,9 @@ class acp_mailing_list
 	
 	function send()
 	{
-		global $config, $db, $user, $auth, $template, $cache;
+		global $config, $db, $user, $auth, $template, $cache, $id;
 		global $phpbb_root_path, $phpbb_admin_path, $phpEx, $table_prefix;
+
 
 		$user->add_lang('acp/email');
 		$this->tpl_name = 'acp_mailing_list_send';
@@ -289,7 +289,21 @@ class acp_mailing_list
 		$subject	= utf8_normalize_nfc(request_var('subject', '', true));
 		$message	= utf8_normalize_nfc(request_var('message', '', true));
 
-		// Do the job ...
+        $sql = 'SELECT username, username_clean, user_email, user_jabber, user_notify_type, user_lang
+                FROM ' . USERS_TABLE . '
+                WHERE mailing_list_subscribed = 1
+                    AND user_type IN (' . USER_NORMAL . ', ' . USER_FOUNDER . ')
+                ORDER BY user_lang, user_notify_type';
+
+        $result = $db->sql_query($sql);
+        $row = $db->sql_fetchrow($result);
+
+        if (!$row)
+        {
+            $error[] = $user->lang['ML_NO_SUBSCRIBERS'];
+        }
+
+        // Do the job ...
 		if ($submit)
 		{
 			// Error checking needs to go here ... if no subject and/or no message then skip
@@ -314,20 +328,6 @@ class acp_mailing_list
 
 			if (!sizeof($error))
 			{
-                $sql = 'SELECT username, username_clean, user_email, user_jabber, user_notify_type, user_lang
-                        FROM ' . USERS_TABLE . '
-                        WHERE mailing_list_subscribed = 1
-                            AND user_type IN (' . USER_NORMAL . ', ' . USER_FOUNDER . ')
-                        ORDER BY user_lang, user_notify_type';
-
-                $result = $db->sql_query($sql);
-				$row = $db->sql_fetchrow($result);
-
-				if (!$row)
-				{
-					$db->sql_freeresult($result);
-					trigger_error($user->lang['NO_USER'] . adm_back_link($this->u_action), E_USER_WARNING);
-				}
 
 				$i = $j = 0;
 
@@ -387,7 +387,8 @@ class acp_mailing_list
 						$messenger->im($email_row['jabber'], $email_row['name']);
 					}
 
-					$messenger->template('admin_send_email', $used_lang);
+                                    
+					$messenger->template('mailing_list', $used_lang);
 
 					$messenger->headers('X-AntiAbuse: Board servername - ' . $config['server_name']);
 					$messenger->headers('X-AntiAbuse: User_id - ' . $user->data['user_id']);
@@ -397,10 +398,15 @@ class acp_mailing_list
 					$messenger->subject(htmlspecialchars_decode($subject));
 					$messenger->set_mail_priority($priority);
 
+                    
+                    /* Get the */
+
+
 					$messenger->assign_vars(array(
 						'CONTACT_EMAIL' => $config['board_contact'],
-						'MESSAGE'		=> htmlspecialchars_decode($message))
-					);
+						'MESSAGE'		=> htmlspecialchars_decode($message),
+                        'U_OPT_OUT'     => generate_board_url() . "/ucp.{$phpEx}?i=mailing_list&mode=prefs}",
+					));
 
 					if (!($messenger->send($used_method)))
 					{

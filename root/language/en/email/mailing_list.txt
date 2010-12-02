@@ -1,0 +1,9 @@
+
+{MESSAGE}
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+To un-subscribe from this mailing list go to: {U_OPT_OUT}
+
+
+{EMAIL_SIG}

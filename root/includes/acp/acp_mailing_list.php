@@ -311,7 +311,7 @@ class acp_mailing_list
 			$use_queue		= (isset($_POST['send_immediately'])) ? false : true;
 			$priority		= request_var('mail_priority_flag', MAIL_NORMAL_PRIORITY);
 
-			if (!check_form_key($form_key))
+            if (!check_form_key($form_key))
 			{
 				$error[] = $user->lang['FORM_INVALID'];
 			}
@@ -328,7 +328,6 @@ class acp_mailing_list
 
 			if (!sizeof($error))
 			{
-
 				$i = $j = 0;
 
 				// Send with BCC, no more than 50 recipients for one mail (to not exceed the limit)
@@ -357,7 +356,7 @@ class acp_mailing_list
 						}
 
 						$email_list[$j][$i]['lang']		= $row['user_lang'];
-						$email_list[$j][$i]['method']	= $row['user_notify_type'];
+						$email_list[$j][$i]['method']	= NOTIFY_EMAIL;//$row['user_notify_type'];;
 						$email_list[$j][$i]['email']	= $row['user_email'];
 						$email_list[$j][$i]['name']		= $row['username'];
 						$email_list[$j][$i]['jabber']	= $row['user_jabber'];
@@ -367,22 +366,24 @@ class acp_mailing_list
 				while ($row = $db->sql_fetchrow($result));
 				$db->sql_freeresult($result);
 
+                
 				// Send the messages
 				include_once($phpbb_root_path . 'includes/functions_messenger.' . $phpEx);
 				include_once($phpbb_root_path . 'includes/functions_user.' . $phpEx);
 				$messenger = new messenger($use_queue);
 
 				$errored = false;
+                $size = sizeof($email_list);
 
-				for ($i = 0, $size = sizeof($email_list); $i < $size; $i++)
+                for ($i = 0; $i < $size; $i++)
 				{
-					$used_lang = $email_list[$i][0]['lang'];
+
+                    $used_lang = $email_list[$i][0]['lang'];
 					$used_method = $email_list[$i][0]['method'];
 
 					for ($j = 0, $list_size = sizeof($email_list[$i]); $j < $list_size; $j++)
 					{
 						$email_row = $email_list[$i][$j];
-
 						$messenger->{((sizeof($email_list[$i]) == 1) ? 'to' : 'bcc')}($email_row['email'], $email_row['name']);
 						$messenger->im($email_row['jabber'], $email_row['name']);
 					}
@@ -400,15 +401,13 @@ class acp_mailing_list
 
                     
                     /* Get the */
-
-
 					$messenger->assign_vars(array(
 						'CONTACT_EMAIL' => $config['board_contact'],
 						'MESSAGE'		=> htmlspecialchars_decode($message),
                         'U_OPT_OUT'     => generate_board_url() . "/ucp.{$phpEx}?i=mailing_list&mode=prefs}",
 					));
 
-					if (!($messenger->send($used_method)))
+                    if (!($messenger->send($used_method)))
 					{
 						$errored = true;
 					}

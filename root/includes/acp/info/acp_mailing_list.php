@@ -34,6 +34,12 @@ class acp_mailing_list_info
                 'manage'		=> array('title' => 'ML_MANAGE',
                                      'auth' => 'acl_a_user',
                                      'cat' => array('ACP_GENERAL')),
+                'subscribers'		=> array('title' => 'ML_SUBSCRIBERS',
+                                     'auth' => 'acl_a_user',
+                                     'cat' => array('ACP_GENERAL')),
+                'unsubscribers'		=> array('title' => 'ML_NON_SUBSCRIBERS',
+                                     'auth' => 'acl_a_user',
+                                     'cat' => array('ACP_GENERAL')),
             ),
         );
 		

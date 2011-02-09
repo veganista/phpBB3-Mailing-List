@@ -46,6 +46,12 @@ class acp_mailing_list
 				$this->send();
 			break;
 
+            case 'subscribers':
+                $this->subscribers();
+            break;
+            case 'unsubscribers':
+                $this->unsubscribers();
+            break;
 		}							 
 	}
 	
@@ -64,13 +70,13 @@ class acp_mailing_list
 
 		if(isset($_POST['unsubscribe']) || isset($_POST['subscribe']))
 		{
-    		/*$unsubscribe = request_var('unsubscribe', array(0), true);
+    		$unsubscribe = request_var('unsubscribe', array(0), true);
             for($i = 0; $i < sizeof($unsubscribe); $i++)
             {
                 $data = array('mailing_list_subscribed' => 0);
                 $sql = 'UPDATE ' . USERS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $data) . ' WHERE user_id = ' . (int)$unsubscribe[$i];
                 $db->sql_query($sql);
-            }*/
+            }
 
     		$subscribe = request_var('subscribe', array(0), true);
             for($i = 0; $i < sizeof($subscribe); $i++)
@@ -82,13 +88,25 @@ class acp_mailing_list
 
 		}
 
-        /*
+        //pagination vars
+        $pagination_url = $this->u_action;
+        $limit = 1;
+
+        $sub_start   = request_var('sub_start', 0);
+        $unsub_start   = request_var('unsub_start', 0);
+
+        $sub_limit   = request_var('sub_limit', (int) $limit); //used for subscriber pagination
+        $unsub_limit   = request_var('unsub_limit', (int) $limit);
+
+        // no result rows greater than 100 per page
+        $limit = ($limit > 100) ? 100 : $limit;
+
         //get the subscribed users
         $sql = "SELECT user_id, user_email, username 
                 FROM " . USERS_TABLE . " u
                 WHERE mailing_list_subscribed = 1
                 AND u.user_type IN (" . USER_NORMAL . ', ' . USER_FOUNDER . ")";
-        $result = $db->sql_query($sql);
+        $result = $db->sql_query_limit($sql, $sub_limit, $sub_start);
 
         while($row = $db->sql_fetchrow($result)){
             $template->assign_block_vars('subscribers', array(
@@ -99,13 +117,34 @@ class acp_mailing_list
         }
 
         $db->sql_freeresult($result);
-        */
+
+        //pagination for subscribers
+
+        // now we run the query again to get the total rows...
+        // the query is identical except we count the rows instead
+        $sql = "SELECT COUNT(u.user_id) as total_users
+                FROM " . USERS_TABLE . " u
+                WHERE mailing_list_subscribed = 1
+                AND u.user_type IN (" . USER_NORMAL . ', ' . USER_FOUNDER . ")";    $result = $db->sql_query($sql);
+
+        // get the total users, this is a single row, single field.
+        $sub_total_users = $db->sql_fetchfield('total_users');
+        // free the result
+        $db->sql_freeresult($result);
+
+        // Assign the pagination variables to the template.
+        $template->assign_vars(array(
+            'SUB_PAGINATION'    => generate_pagination($pagination_url, $sub_total_users, $sub_limit, $sub_start),
+            'PAGE_NUMBER'       => on_page($sub_total_users, $sub_limit, $sub_start),
+            'TOTAL_USERS'       => ($sub_total_users == 1) ? $user->lang['ML_LIST_USER'] : sprintf($user->lang['ML_LIST_USERS'], $sub_total_users),
+        ));
+
         //get the unsubscribed users
         $sql = "SELECT user_id, user_email, username
                 FROM " . USERS_TABLE . " u
                 WHERE mailing_list_subscribed = 0
                 AND u.user_type IN (" . USER_NORMAL . ', ' . USER_FOUNDER . ")";
-        $result = $db->sql_query($sql);
+        $result = $db->sql_query_limit($sql, $unsub_limit, $unsub_start);
 
         while($row = $db->sql_fetchrow($result)){
             $template->assign_block_vars('nonsubscribers', array(
@@ -115,7 +154,28 @@ class acp_mailing_list
             ));
         }
 
+        // now we run the query again to get the total rows...
+        // the query is identical except we count the rows instead
+        $sql = "SELECT COUNT(u.user_id) as total_users
+                FROM " . USERS_TABLE . " u
+                WHERE mailing_list_subscribed = 0
+                AND u.user_type IN (" . USER_NORMAL . ', ' . USER_FOUNDER . ")";
+        $result = $db->sql_query($sql);
+
+        // get the total users, this is a single row, single field.
+        $unsub_total_users = $db->sql_fetchfield('total_users');
+        // free the result
         $db->sql_freeresult($result);
+
+        // Assign the pagination variables to the template.
+        $template->assign_vars(array(
+            'UNSUB_PAGINATION'    => generate_pagination($pagination_url, $unsub_total_users, $unsub_limit, $unsub_start),
+            'PAGE_NUMBER'       => on_page($unsub_total_users, $unsub_limit, $unsub_start),
+            'TOTAL_USERS'       => ($unsub_total_users == 1) ? $user->lang['ML_LIST_USER'] : sprintf($user->lang['ML_LIST_USERS'], $unsub_total_users),
+        ));
+
+        $db->sql_freeresult($result);
+
 	}
 	
 	function configure(){
@@ -268,7 +328,158 @@ class acp_mailing_list
 		die('remove');
 	
 	}
-	
+	function subscribers()
+	{
+        global $template, $db, $user, $phpEx, $phpbb_root_path, $phpbb_admin_path;
+
+        $this->page_title 	= 'ML_SUBSCRIBERS';
+        $this->tpl_name		= 'acp_mailing_list_subscribers';
+
+		$template->assign_vars(array(
+				'U_ACTION'              => $this->u_action,
+			)
+		);
+
+		if(isset($_POST['subscribe']))
+		{
+    		$subscribe = request_var('subscribe', array(0), true);
+            for($i = 0; $i < sizeof($subscribe); $i++)
+            {
+                $data = array('mailing_list_subscribed' => 1);
+                $sql = 'UPDATE ' . USERS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $data) . ' WHERE user_id = ' . (int)$subscribe[$i];
+                $db->sql_query($sql);
+            }
+
+		}
+
+        //pagination vars
+        $pagination_url = $this->u_action;
+        $limit = 1;
+
+        $sub_start   = request_var('sub_start', 0);
+
+        $sub_limit   = request_var('sub_limit', (int) $limit); //used for subscriber pagination
+
+        // no result rows greater than 100 per page
+        $limit = ($limit > 100) ? 100 : $limit;
+
+        //get the subscribed users
+        $sql = "SELECT user_id, user_email, username
+                FROM " . USERS_TABLE . " u
+                WHERE mailing_list_subscribed = 1
+                AND u.user_type IN (" . USER_NORMAL . ', ' . USER_FOUNDER . ")";
+        $result = $db->sql_query_limit($sql, $sub_limit, $sub_start);
+
+        while($row = $db->sql_fetchrow($result)){
+            $template->assign_block_vars('subscribers', array(
+                'ID'        => $row['user_id'],
+                'USERNAME'  => $row['username'],
+                'EMAIL'     => $row['user_email'],
+            ));
+        }
+
+        $db->sql_freeresult($result);
+
+        //pagination for subscribers
+
+        // now we run the query again to get the total rows...
+        // the query is identical except we count the rows instead
+        $sql = "SELECT COUNT(u.user_id) as total_users
+                FROM " . USERS_TABLE . " u
+                WHERE mailing_list_subscribed = 1
+                AND u.user_type IN (" . USER_NORMAL . ', ' . USER_FOUNDER . ")";    $result = $db->sql_query($sql);
+
+        // get the total users, this is a single row, single field.
+        $sub_total_users = $db->sql_fetchfield('total_users');
+        // free the result
+        $db->sql_freeresult($result);
+
+        // Assign the pagination variables to the template.
+        $template->assign_vars(array(
+            'SUB_PAGINATION'    => generate_pagination($pagination_url, $sub_total_users, $sub_limit, $sub_start),
+            'PAGE_NUMBER'       => on_page($sub_total_users, $sub_limit, $sub_start),
+            'TOTAL_USERS'       => ($sub_total_users == 1) ? $user->lang['ML_LIST_USER'] : sprintf($user->lang['ML_LIST_USERS'], $sub_total_users),
+        ));
+        
+
+	}
+
+	function unsubscribers()
+	{
+
+		global $template, $db, $user, $phpEx, $phpbb_root_path, $phpbb_admin_path;
+
+        $this->page_title 	= 'ML_NON_SUBSCRIBERS';
+        $this->tpl_name		= 'acp_mailing_list_unsubscribers';
+
+		$template->assign_vars(array(
+				'U_ACTION'              => $this->u_action,
+			)
+		);
+
+		if(isset($_POST['unsubscribe']))
+		{
+    		$unsubscribe = request_var('unsubscribe', array(0), true);
+            for($i = 0; $i < sizeof($unsubscribe); $i++)
+            {
+                $data = array('mailing_list_subscribed' => 0);
+                $sql = 'UPDATE ' . USERS_TABLE . ' SET ' . $db->sql_build_array('UPDATE', $data) . ' WHERE user_id = ' . (int)$unsubscribe[$i];
+                $db->sql_query($sql);
+            }
+
+
+
+		}
+
+        //pagination vars
+        $pagination_url = $this->u_action;
+        $limit = 1;
+
+        $unsub_start   = request_var('unsub_start', 0);
+
+        $unsub_limit   = request_var('unsub_limit', (int) $limit);
+
+        // no result rows greater than 100 per page
+        $limit = ($limit > 100) ? 100 : $limit;
+
+        //get the unsubscribed users
+        $sql = "SELECT user_id, user_email, username
+                FROM " . USERS_TABLE . " u
+                WHERE mailing_list_subscribed = 0
+                AND u.user_type IN (" . USER_NORMAL . ', ' . USER_FOUNDER . ")";
+        $result = $db->sql_query_limit($sql, $unsub_limit, $unsub_start);
+
+        while($row = $db->sql_fetchrow($result)){
+            $template->assign_block_vars('nonsubscribers', array(
+                'ID'        => $row['user_id'],
+                'USERNAME'  => $row['username'],
+                'EMAIL'     => $row['user_email'],
+            ));
+        }
+
+        // now we run the query again to get the total rows...
+        // the query is identical except we count the rows instead
+        $sql = "SELECT COUNT(u.user_id) as total_users
+                FROM " . USERS_TABLE . " u
+                WHERE mailing_list_subscribed = 0
+                AND u.user_type IN (" . USER_NORMAL . ', ' . USER_FOUNDER . ")";
+        $result = $db->sql_query($sql);
+
+        // get the total users, this is a single row, single field.
+        $unsub_total_users = $db->sql_fetchfield('total_users');
+        // free the result
+        $db->sql_freeresult($result);
+
+        // Assign the pagination variables to the template.
+        $template->assign_vars(array(
+            'UNSUB_PAGINATION'    => generate_pagination($pagination_url, $unsub_total_users, $unsub_limit, $unsub_start),
+            'PAGE_NUMBER'       => on_page($unsub_total_users, $unsub_limit, $unsub_start),
+            'TOTAL_USERS'       => ($unsub_total_users == 1) ? $user->lang['ML_LIST_USER'] : sprintf($user->lang['ML_LIST_USERS'], $unsub_total_users),
+        ));
+
+        $db->sql_freeresult($result);
+        
+	}
 	function send()
 	{
 		global $config, $db, $user, $auth, $template, $cache, $id;

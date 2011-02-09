@@ -63,7 +63,8 @@ $lang = array_merge($lang, array(
     'ML_MAILING_LIST'               => 'Mailing List',
     'ML_ALLOW_EMAILS'               => 'Sign up to the mailing list',
     'ML_PREFERENCES'                => 'Preferences',
-
+    'ML_LIST_USERS'                 => '%d Users',
+    'ML_LIST_USER'                  => '1 User',
 
 ));
 ?>

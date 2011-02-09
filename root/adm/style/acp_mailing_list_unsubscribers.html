@@ -8,46 +8,6 @@
 
 <form action="{U_ACTION}" method="post" name="subscribe_users">
 
-<h2>{L_ML_SUBSCRIBERS}</h2>
-
-<table cellspacing="1">
-	<thead>
-	<tr>
-		<th>{L_ML_USERNAME}</th>
-        <th>{L_ML_EMAIL_ADDRESS}</th>
-		<th width="10%">{L_ML_UNSUBSCRIBE}</th>
-	</tr>
-	</thead>
-	<tbody>
-	<!-- BEGIN subscribers -->
-	<!-- IF subscribers.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->
-		<td>
-			{subscribers.USERNAME}
-		</td>
-		<td>
-			{subscribers.EMAIL}
-        </td>
-		<td>
-            <input type="checkbox" name="unsubscribe[]" value="{subscribers.ID}" />
-		</td>
-	</tr>
-	<!-- BEGINELSE -->
-	<tr>
-		<td>
-			{L_ML_NO_SUBSCRIBERS}
-		</td>
-	</tr>
-	<!-- END subscribers -->
-	</tbody>
-</table>
-<ul class="linklist">
-    <li class="rightside pagination">{TOTAL_USERS} &bull; <!-- IF SUB_PAGINATION --><span>{SUB_PAGINATION}</span><!-- ELSE -->{SUB_PAGE_NUMBER}<!-- ENDIF --></li>
-</ul>
-<p class="quick">
-	<input class="button2" name="submit" type="submit" value="{L_ML_UNSUBSCRIBE}" />
-</p>
-
-
 <h2>{L_ML_NON_SUBSCRIBERS}</h2>
 
 <table cellspacing="1">

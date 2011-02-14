@@ -66,15 +66,18 @@ $lang = array_merge($lang, array(
 			<edit>
 				<find><![CDATA[	'LOG_WORD_EDIT'			=> '<strong>Edited word censor</strong><br />» %s',
 ));]]></find>
-				<action type="after-add"><![CDATA[/* mailing_list_mod */
+				<action type="after-add"><![CDATA[//mailing_list MOD
 $lang = array_merge($lang, array(
-    'ML_MAILING_LIST'       => 'Mailing List',
-    'ML_ACTIONS'            => 'Actions',
-    'ML_MANAGE'             => 'Manage',
-    'ML_SEND'               => 'Send',
-
+    'ML_MANAGE'         => 'Manage',
+    'ML_CONFIGURE'		=> 'Configure',
+    'ML_REMOVE_USER'	=> 'Remove User',
+    'ML_MAILING_LIST'	=> 'Mailing List',
+    'ML_SEND'           => 'Send',
+    'ML_ACTIONS'        => 'Actions',
+    'ML_SUBSCRIBERS'       => 'Subscribers',
+    'ML_NON_SUBSCRIBERS'        => 'Non-subscribers',
 ));
-/* end mailing_list mod */]]></action>
+//end mailing_list MOD]]></action>
 			</edit>
 		</open>
 	</action-group>
